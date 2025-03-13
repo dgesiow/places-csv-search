@@ -1,0 +1,60 @@
+<<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Places CSV 查詢</title>
+</head>
+<body>
+  <h1>查詢 Google Places 並輸出 CSV</h1>
+  <form id="searchForm">
+    <label>關鍵字: <input type="text" id="keyword" required></label><br>
+    <label>
+      經緯度 (以逗號分隔，例如: 24.75021009053167, 121.74391218631662): 
+      <input type="text" id="coords" required>
+    </label><br>
+    <label>距離（公尺）: <input type="number" id="radius" required></label><br>
+    <button type="submit">查詢</button>
+  </form>
+  <hr>
+  <div id="message"></div>
+  <div id="urlDisplay" style="margin-top: 20px; font-size: 14px;"></div>
+
+  <script>
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const keyword = document.getElementById('keyword').value;
+      const coordsInput = document.getElementById('coords').value;
+      const radius = document.getElementById('radius').value;
+      const messageDiv = document.getElementById('message');
+      const urlDisplayDiv = document.getElementById('urlDisplay');
+      messageDiv.innerHTML = "查詢中...";
+
+      // 分割經緯度
+      const coordsArray = coordsInput.split(',');
+      if (coordsArray.length < 2) {
+         messageDiv.innerHTML = "請輸入正確的經緯度格式，例如: 24.75021009053167, 121.74391218631662";
+         return;
+      }
+      const lat = coordsArray[0].trim();
+      const lng = coordsArray[1].trim();
+
+      // Cloud Function URL
+      const cloudFunctionUrl = "https://us-central1-carbon-airlock-453115-i1.cloudfunctions.net/searchToCSV";
+      const url = `${cloudFunctionUrl}?keyword=${encodeURIComponent(keyword)}&lat=${lat}&lng=${lng}&radius=${radius}`;
+      
+      
+      // 自動點擊該連結（模擬使用者點擊）
+      const autoLink = document.createElement("a");
+      autoLink.href = url;
+      autoLink.style.display = "none";
+      autoLink.download = "results.csv";  // 確保為下載動作
+      document.body.appendChild(autoLink);
+      autoLink.click();
+      document.body.removeChild(autoLink);
+
+      // 額外提示
+      messageDiv.innerHTML = "查詢完成，正在下載 CSV 檔案...";
+    });
+  </script>
+</body>
+</html>
