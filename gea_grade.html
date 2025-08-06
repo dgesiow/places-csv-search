@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會考成績推估學測</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .input-group { margin-bottom: 10px; }
+        label { display: inline-block; width: 120px; }
+        select { width: 100px; }
+        .result { margin-top: 20px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <h1>會考成績推估學測</h1>
+
+    <div class="input-group">
+        <label for="scoreChinese">會考國文</label>
+        <select id="scoreChinese">
+            <option value="">請選擇</option>
+            <option value="7">A++</option>
+            <option value="6">A+</option>
+            <option value="5">A</option>
+            <option value="4">B++</option>
+            <option value="3">B+</option>
+            <option value="2">B</option>
+            <option value="1">C</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label for="scoreEnglish">會考英文</label>
+        <select id="scoreEnglish">
+            <option value="">請選擇</option>
+            <option value="7">A++</option>
+            <option value="6">A+</option>
+            <option value="5">A</option>
+            <option value="4">B++</option>
+            <option value="3">B+</option>
+            <option value="2">B</option>
+            <option value="1">C</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label for="scoreMath">會考數學</label>
+        <select id="scoreMath">
+            <option value="">請選擇</option>
+            <option value="7">A++</option>
+            <option value="6">A+</option>
+            <option value="5">A</option>
+            <option value="4">B++</option>
+            <option value="3">B+</option>
+            <option value="2">B</option>
+            <option value="1">C</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label for="scoreSocial">會考社會</label>
+        <select id="scoreSocial">
+            <option value="">請選擇</option>
+            <option value="7">A++</option>
+            <option value="6">A+</option>
+            <option value="5">A</option>
+            <option value="4">B++</option>
+            <option value="3">B+</option>
+            <option value="2">B</option>
+            <option value="1">C</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label for="scoreScience">會考自然</label>
+        <select id="scoreScience">
+            <option value="">請選擇</option>
+            <option value="7">A++</option>
+            <option value="6">A+</option>
+            <option value="5">A</option>
+            <option value="4">B++</option>
+            <option value="3">B+</option>
+            <option value="2">B</option>
+            <option value="1">C</option>
+        </select>
+    </div>
+
+    <button onclick="estimateScores()">計算學測分數</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function estimateScores() {
+            const chinese = parseInt(document.getElementById('scoreChinese').value);
+            const english = parseInt(document.getElementById('scoreEnglish').value);
+            const math = parseInt(document.getElementById('scoreMath').value);
+            const social = parseInt(document.getElementById('scoreSocial').value);
+            const science = parseInt(document.getElementById('scoreScience').value);
+
+            let message = '';
+
+            if ([chinese, english, math, social, science].some(score => isNaN(score))) {
+                message = '請選擇所有科目的會考成績';
+            } else {
+                const calc = (x, slope, intercept) => (x * slope + intercept).toFixed(2);
+                const level = (score) => {
+                    switch(score) {
+                        case 7: return 'A++';
+                        case 6: return 'A+';
+                        case 5: return 'A';
+                        case 4: return 'B++';
+                        case 3: return 'B+';
+                        case 2: return 'B';
+                        case 1: return 'C';
+                        default: return '';
+                    }
+                };
+
+                const estChinese = calc(chinese, 0.88, 6.59);
+                const estEnglish = calc(english, 1.70, 1.31);
+                const estMathA = calc(math, 1.36, 0.34);
+                const estMathB = calc(math, 1.63, 0.75);
+                const estSocial = calc(social, 1.04, 5.96);
+                const estScience = calc(science, 1.54, 3.13);
+
+                message = `<ul>
+                    <li>會考國文：<strong>${level(chinese)}</strong> → 學測國文：<strong>${estChinese}</strong> 級分</li>
+                    <li>會考英文：<strong>${level(english)}</strong> → 學測英文：<strong>${estEnglish}</strong> 級分</li>
+                    <li>會考數學：<strong>${level(math)}</strong> → 學測數學A：<strong>${estMathA}</strong> 級分、數學B：<strong>${estMathB}</strong> 級分</li>
+                    <li>會考社會：<strong>${level(social)}</strong> → 學測社會：<strong>${estSocial}</strong> 級分</li>
+                    <li>會考自然：<strong>${level(science)}</strong> → 學測自然：<strong>${estScience}</strong> 級分</li>
+                </ul>`;
+            }
+
+            document.getElementById('result').innerHTML = message;
+        }
+    </script>
+</body>
+</html>
