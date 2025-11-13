@@ -39,7 +39,7 @@
       const lng = coordsArray[1].trim();
 
       // Cloud Function URL
-      const cloudFunctionUrl = "https://us-central1-carbon-airlock-453115-i1.cloudfunctions.net/searchToCSV";
+      const cloudFunctionUrl = "https://searchtocsv-v2-313377070238.asia-east1.run.app";
       const url = `${cloudFunctionUrl}?keyword=${encodeURIComponent(keyword)}&lat=${lat}&lng=${lng}&radius=${radius}`;
       
       
